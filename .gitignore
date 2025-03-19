@@ -1,0 +1,14 @@
+WebChat.Application/bin
+WebChat.Application/obj
+WebChat.Core/obj
+WebChat.Core/bin
+WebChat.Infrasctructure/obj
+WebChat.Infrasctructure/bin
+WebChat.Persistence/obj
+WebChat.Persistence/bin
+WebChat.Web/bin
+WebChat.Web/obj
+WebChat.Web/Properties/launchSettings.json
+WebChat.Web/appsettings.Development.json
+WebChat.Web/appsettings.json
+WebChat.sln
