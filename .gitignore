@@ -2,8 +2,8 @@ WebChat.Application/bin
 WebChat.Application/obj
 WebChat.Core/obj
 WebChat.Core/bin
-WebChat.Infrasctructure/obj
-WebChat.Infrasctructure/bin
+WebChat.Infrastructure/obj
+WebChat.Infrastructure/bin
 WebChat.Persistence/obj
 WebChat.Persistence/bin
 WebChat.Web/bin
