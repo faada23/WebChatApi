@@ -21,12 +21,14 @@ public static class AuthExtension{
                 {
                     OnMessageReceived = context => {
                         context.Token = context.Request.Cookies["JwtCookie"];
-
+                        
                         return Task.CompletedTask;
                     }    
                 };
             });
 
+        
+        collection.AddAuthorization();
         return collection;
     }
 }

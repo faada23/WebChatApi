@@ -1,19 +1,38 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+ 
+[ApiController]
+[Route("[controller]")]
+[AllowAnonymous]
 public class AuthController : ControllerBase {
     public IAuthService AuthService{get; set;}
     public AuthController(IAuthService authService){
         AuthService = authService;
     }
 
-    public async Task<IActionResult> Login(LoginRequest request){
-        string? token = await AuthService.Login(request);
+    [HttpPost("Login")]
+    public async Task<ActionResult<string?>> Login([FromForm] IFormCollection form){
+
+        var username = form["username"].ToString();
+        var password = form["password"].ToString();
+
+        string? token = await AuthService.Login(username, password);
         if(token != null)
         {
             Response.Cookies.Append("JwtCookie",token); 
-            return Ok();
+            return Ok(new {token});
         }
 
         return StatusCode(500,"Wrong authentication data");
+    }
+
+    [HttpPost("Register")]
+    public async Task<IActionResult> Register([FromForm] IFormCollection form){
+
+        var username = form["username"].ToString();
+        var password = form["password"].ToString();
+
+        await AuthService.Register(username, password);
+        return Ok();
     }
 }
