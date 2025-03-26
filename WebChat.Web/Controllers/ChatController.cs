@@ -11,9 +11,15 @@ public class ChatController : ControllerBase {
     }
 
     [HttpGet("UserChats")]
-    public async Task<ActionResult<string>> GetUserChats(){
+    public async Task<ActionResult<string[]>> GetUserChats(){
+        string[] messages = new string[]{
+            "1231231",
+            "312412412",
+            "ff34f4f",
+            "lol"
+        };
 
-        return Ok(new {result = "working!"});
+        return Ok(messages);
     }
 
 

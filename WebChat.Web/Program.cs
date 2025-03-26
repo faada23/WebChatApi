@@ -4,11 +4,13 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+builder.Services.AddSignalR();
 
 builder.Services.AddDbContext<DatabaseContext>(options => options.UseNpgsql(Environment.GetEnvironmentVariable("WebChatConnection")));
 builder.Services.AddScoped<IRepository<User>,Repository<User>>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
+
 
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("JWTOptions"));
 builder.Services.AddJwtAuth(builder.Configuration);
@@ -45,6 +47,7 @@ app.UseCors("AllowFrontOrigin");
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapHub<ChatHub>("/chathub");
 app.MapControllers();
 
 app.Run();
