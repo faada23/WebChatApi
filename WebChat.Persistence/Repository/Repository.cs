@@ -15,6 +15,7 @@ public class Repository<T> : IRepository<T> where T : class
     {
         dbSet.Add(entity);
         await _db.SaveChangesAsync();
+
     }
 
     public async Task Delete(Guid id)
@@ -29,7 +30,7 @@ public class Repository<T> : IRepository<T> where T : class
         await _db.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<T>> GetAll(Expression<Func<T, bool>>? filter = null,string? includeProperties = null)
+    public async Task<List<T>> GetAll(Expression<Func<T, bool>>? filter = null, Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null, string? includeProperties = null)
     {
         IQueryable<T> query = dbSet;
         
@@ -45,6 +46,12 @@ public class Repository<T> : IRepository<T> where T : class
                 query = query.Include(includeProp);
             }
         }
+
+        if(orderBy != null)
+        {
+            query = orderBy(query);
+        }
+
         return await query.ToListAsync();
     }
 
