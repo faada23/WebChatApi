@@ -8,7 +8,11 @@ builder.Services.AddSignalR();
 
 builder.Services.AddDbContext<DatabaseContext>(options => options.UseNpgsql(Environment.GetEnvironmentVariable("WebChatConnection")));
 builder.Services.AddScoped<IRepository<User>,Repository<User>>();
+builder.Services.AddScoped<IRepository<Chat>,Repository<Chat>>();
+builder.Services.AddScoped<IRepository<Message>,Repository<Message>>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IChatService,ChatService>();
+builder.Services.AddScoped<IMessageService,MessageService>();
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 
 
