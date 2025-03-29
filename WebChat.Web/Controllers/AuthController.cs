@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
  
 [ApiController]
@@ -35,4 +36,17 @@ public class AuthController : ControllerBase {
         await AuthService.Register(username, password);
         return Ok();
     }
+
+
+    [HttpGet("Check")]
+    public async Task<IActionResult> IsUserAuthenticated(){
+
+
+        if(User.Identity != null && User.Identity.IsAuthenticated)
+        {
+            return Ok();
+        }
+        return Unauthorized();
+    }
+    
 }
