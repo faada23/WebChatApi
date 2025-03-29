@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
  
@@ -6,21 +7,33 @@ using Microsoft.AspNetCore.Mvc;
 [Authorize]
 public class ChatController : ControllerBase {
 
-    public ChatController(){
-
+    public IChatService ChatService {get;set;}
+    public ChatController(IChatService chatService){
+        ChatService = chatService;
     }
 
-    [HttpGet("UserChats")]
-    public async Task<ActionResult<string[]>> GetUserChats(){
-        string[] messages = new string[]{
-            "1231231",
-            "312412412",
-            "ff34f4f",
-            "lol"
-        };
-
-        return Ok(messages);
+    [HttpPost("PrivateChat")]
+    public async Task<IActionResult> CreatePrivateChat(int joinUserId)
+    {   
+        int currentUserId = GetCurrentUserId();
+        await ChatService.CreatePrivateChat(currentUserId,joinUserId);
+        return Ok();
     }
 
+    [HttpGet("PrivateChat")]
+    public async Task<ActionResult<List<Chat>>> GetPrivateChats()
+    {   
+        int currentUserId = GetCurrentUserId();
+        var chats = await ChatService.GetPrivateChats(currentUserId);
+        return Ok(chats);
+    }
+
+
+    private int GetCurrentUserId()
+    {
+        var userId = User.FindFirstValue("Id");
+
+        return int.Parse(userId);
+    }
 
 }
