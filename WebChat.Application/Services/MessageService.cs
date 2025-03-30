@@ -1,6 +1,3 @@
-
-
-
 public class MessageService: IMessageService
 {       
     public IRepository<Message> MessageRepository {get;set;}
@@ -13,7 +10,7 @@ public class MessageService: IMessageService
     {
         var messages = await MessageRepository.GetAll(
             filter: x => x.ChatId == chatId,
-            orderBy: x => x.OrderByDescending(x => x.CreatedDate),
+            orderBy: x => x.OrderBy(x => x.CreatedDate),
             includeProperties:"Sender"       
             );
 
@@ -28,5 +25,17 @@ public class MessageService: IMessageService
                 ),
                 message.ChatId
         )).ToList();
+    }
+
+    public async Task<Message> CreateMessage(CreateMessage messagesRequest){
+        var message = new Message {
+            Content = messagesRequest.Content,
+            SenderId = messagesRequest.SenderId,
+            ChatId = messagesRequest.ChatId
+        };
+
+        await MessageRepository.Insert(message);
+
+        return message;
     }
 }

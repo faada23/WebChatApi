@@ -13,7 +13,7 @@ public class ChatController : ControllerBase {
     }
 
     [HttpPost("PrivateChat")]
-    public async Task<IActionResult> CreatePrivateChat(int joinUserId)
+    public async Task<IActionResult> CreatePrivateChat([FromBody] int joinUserId)
     {   
         int currentUserId = GetCurrentUserId();
         await ChatService.CreatePrivateChat(currentUserId,joinUserId);
