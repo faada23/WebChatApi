@@ -13,7 +13,7 @@ public class ChatController : ControllerBase {
     }
 
     [HttpPost("PrivateChat")]
-    public async Task<IActionResult> CreatePrivateChat([FromBody] int joinUserId)
+    public async Task<IActionResult> CreatePrivateChat([FromQuery] int joinUserId)
     {   
         int currentUserId = GetCurrentUserId();
         await ChatService.CreatePrivateChat(currentUserId,joinUserId);
@@ -21,10 +21,10 @@ public class ChatController : ControllerBase {
     }
 
     [HttpGet("PrivateChat")]
-    public async Task<ActionResult<List<Chat>>> GetPrivateChats()
+    public async Task<ActionResult<List<Chat>>> GetPrivateChats([FromQuery] PaginationParameters? pagParams)
     {   
         int currentUserId = GetCurrentUserId();
-        var chats = await ChatService.GetPrivateChats(currentUserId);
+        var chats = await ChatService.GetPrivateChats(currentUserId,pagParams);
         return Ok(chats);
     }
 

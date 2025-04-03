@@ -12,11 +12,11 @@ public class MessageController : ControllerBase {
         MessageService = messageService;
     }
 
-    [HttpGet("MessagesByChatId")]
-    public async Task<IActionResult> GetMessagesByChatId(int chatId)
+    [HttpGet("Messages/{chatId}")]
+    public async Task<IActionResult> GetMessagesByChatId(int chatId,[FromQuery] PaginationParameters? pagParams)
     {   
         int currentUserId = GetCurrentUserId();
-        var messages = await MessageService.GetMessages(chatId);
+        var messages = await MessageService.GetMessages(chatId,pagParams);
         return Ok(messages);
     }
 

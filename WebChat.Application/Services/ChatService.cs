@@ -37,14 +37,15 @@ public class ChatService : IChatService
         await ChatRepository.Insert(chat);
     }
 
-    public async Task<List<GetChatResponse>> GetPrivateChats(int userId){
+    public async Task<PagedResponse<GetChatResponse>> GetPrivateChats(int userId,PaginationParameters pagParams){
         var privateChats = await ChatRepository.GetAll(
             filter: x => x.ChatType == ChatType.Private &&
                 x.Users!.Any(x => x.Id == userId),
-                includeProperties:"Users"
+            pagParams: pagParams,
+            includeProperties:"Users"
             );
         
-        return privateChats.Select(chat => new GetChatResponse
+        var chatsDto = privateChats.Select(chat => new GetChatResponse
             (   
                 chat.Id,
                 chat.Users!.FirstOrDefault(u => u.Id != userId)!.Username,
@@ -56,6 +57,13 @@ public class ChatService : IChatService
                 )).ToList()
         )).ToList();
 
+        return new PagedResponse<GetChatResponse>(
+            chatsDto,
+            privateChats.CurrentPage,
+            privateChats.PageSize,
+            privateChats.TotalItems,
+            privateChats.TotalPages
+        );
     }
 
 

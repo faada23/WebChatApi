@@ -6,15 +6,16 @@ public class MessageService: IMessageService
         MessageRepository = messageRepository;
     }
 
-    public async Task<List<GetMessagesResponse>> GetMessages(int chatId)
+    public async Task<PagedResponse<GetMessagesResponse>> GetMessages(int chatId,PaginationParameters pagParams)
     {
         var messages = await MessageRepository.GetAll(
             filter: x => x.ChatId == chatId,
+            pagParams: pagParams,
             orderBy: x => x.OrderBy(x => x.CreatedDate),
             includeProperties:"Sender"       
             );
 
-        return messages.Select(message => new GetMessagesResponse
+        var messagesDto = messages.Select(message => new GetMessagesResponse
             (   
                 message.Id,
                 message.Content,
@@ -25,6 +26,14 @@ public class MessageService: IMessageService
                 ),
                 message.ChatId
         )).ToList();
+
+        return new PagedResponse<GetMessagesResponse>(
+            messagesDto,
+            messages.CurrentPage,
+            messages.PageSize,
+            messages.TotalItems,
+            messages.TotalPages
+        );
     }
 
     public async Task<Message> CreateMessage(CreateMessage messagesRequest){
