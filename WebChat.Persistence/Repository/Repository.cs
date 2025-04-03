@@ -30,21 +30,29 @@ public class Repository<T> : IRepository<T> where T : class
         await _db.SaveChangesAsync();
     }
 
-    public async Task<List<T>> GetAll(Expression<Func<T, bool>>? filter = null, Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null, string? includeProperties = null)
+    public async Task<PagedList<T>> GetAll(Expression<Func<T, bool>>? filter = null, PaginationParameters? pagParams = null, Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null, string? includeProperties = null)
     {
         IQueryable<T> query = dbSet;
-        
+
+        // default pagination parameters if pagParams is null
+        pagParams ??= new PaginationParameters();
+
         if(filter != null)
         {
             query = query.Where(filter);
         }
 
+
+        var totalItems = await query.CountAsync();
+         
+        query = query
+            .Skip((pagParams.Page - 1) * pagParams.PageSize)
+            .Take(pagParams.PageSize);
+
+
         if (!string.IsNullOrEmpty(includeProperties))
         {
-            foreach (var includeProp in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-            {
-                query = query.Include(includeProp);
-            }
+            query = IncludeProperties(query, includeProperties);
         }
 
         if(orderBy != null)
@@ -52,7 +60,8 @@ public class Repository<T> : IRepository<T> where T : class
             query = orderBy(query);
         }
 
-        return await query.ToListAsync();
+        var list = await query.ToListAsync();
+        return PagedList<T>.ToPagedList(list,pagParams.Page,pagParams.PageSize,totalItems);
     }
 
     public async Task<T> GetByFilter(Expression<Func<T, bool>> filter, string? includeProperties = null)
@@ -60,12 +69,11 @@ public class Repository<T> : IRepository<T> where T : class
         IQueryable<T> query = dbSet;
         query = query.Where(filter);
 
-        if(!string.IsNullOrEmpty(includeProperties)){
-            foreach(var includeProp in includeProperties
-            .Split(new char[] {','},StringSplitOptions.RemoveEmptyEntries)){
-                query = query.Include(includeProp);
-            }
+        if (!string.IsNullOrEmpty(includeProperties))
+        {
+            query = IncludeProperties(query, includeProperties);
         }
+
         return await query.FirstOrDefaultAsync();
     }
 
@@ -76,4 +84,13 @@ public class Repository<T> : IRepository<T> where T : class
         await _db.SaveChangesAsync();
     }
     
+    private IQueryable<T> IncludeProperties(IQueryable<T> query, string includeProperties)
+    {
+        foreach (var includeProp in includeProperties.Split(',', StringSplitOptions.RemoveEmptyEntries))
+        {
+            query = query.Include(includeProp);
+        }
+
+        return query;
+    }
 }

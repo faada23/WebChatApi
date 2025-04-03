@@ -15,8 +15,7 @@ public class ChatHub : Hub {
 
     public async Task JoinChat(int chatId){
         var groupName = GetGroupName(chatId);
-        await Groups.AddToGroupAsync(Context.ConnectionId,groupName);
-        await Clients.Group(groupName).SendAsync("ReceiveMessage", "LOL");    
+        await Groups.AddToGroupAsync(Context.ConnectionId,groupName);   
     }
 
     public async Task SendMessage(int chatId, string content){
