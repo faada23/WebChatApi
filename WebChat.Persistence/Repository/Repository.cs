@@ -42,6 +42,10 @@ public class Repository<T> : IRepository<T> where T : class
             query = query.Where(filter);
         }
 
+        if(orderBy != null)
+        {
+            query = orderBy(query);
+        }
 
         var totalItems = await query.CountAsync();
          
@@ -53,11 +57,6 @@ public class Repository<T> : IRepository<T> where T : class
         if (!string.IsNullOrEmpty(includeProperties))
         {
             query = IncludeProperties(query, includeProperties);
-        }
-
-        if(orderBy != null)
-        {
-            query = orderBy(query);
         }
 
         var list = await query.ToListAsync();

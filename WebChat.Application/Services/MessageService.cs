@@ -11,7 +11,7 @@ public class MessageService: IMessageService
         var messages = await MessageRepository.GetAll(
             filter: x => x.ChatId == chatId,
             pagParams: pagParams,
-            orderBy: x => x.OrderBy(x => x.CreatedDate),
+            orderBy: x => x.OrderByDescending(x => x.CreatedDate),
             includeProperties:"Sender"       
             );
 
@@ -26,6 +26,9 @@ public class MessageService: IMessageService
                 ),
                 message.ChatId
         )).ToList();
+
+        //returning list in rigth order
+        messagesDto.Reverse();
 
         return new PagedResponse<GetMessagesResponse>(
             messagesDto,
