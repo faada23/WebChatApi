@@ -27,7 +27,10 @@ public class AuthService : IAuthService {
     }
 
     public async Task Register(string reqUsername, string reqHashPassword)
-    {
+    {   
+        var existingUser = await UserRepository.GetByFilter(u => u.Username == reqUsername);
+        if(existingUser != null) return;
+
         User user = new User{
             Username = reqUsername,
             PasswordHash = reqHashPassword
