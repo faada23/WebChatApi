@@ -13,6 +13,7 @@ builder.Services.AddScoped<IRepository<Message>,Repository<Message>>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IChatService,ChatService>();
 builder.Services.AddScoped<IMessageService,MessageService>();
+builder.Services.AddScoped<IUserService,UserService>();
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 
 

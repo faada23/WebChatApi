@@ -21,7 +21,7 @@ public class ChatController : ControllerBase {
     }
 
     [HttpGet("PrivateChat")]
-    public async Task<ActionResult<List<Chat>>> GetPrivateChats([FromQuery] PaginationParameters? pagParams)
+    public async Task<ActionResult<PagedResponse<GetChatResponse>>> GetPrivateChats([FromQuery] PaginationParameters? pagParams)
     {   
         int currentUserId = GetCurrentUserId();
         var chats = await ChatService.GetPrivateChats(currentUserId,pagParams);

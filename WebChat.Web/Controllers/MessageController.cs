@@ -13,7 +13,7 @@ public class MessageController : ControllerBase {
     }
 
     [HttpGet("Messages/{chatId}")]
-    public async Task<IActionResult> GetMessagesByChatId(int chatId,[FromQuery] PaginationParameters? pagParams)
+    public async Task<ActionResult<PagedResponse<GetMessagesResponse>>> GetMessagesByChatId(int chatId,[FromQuery] PaginationParameters? pagParams)
     {   
         int currentUserId = GetCurrentUserId();
         var messages = await MessageService.GetMessages(chatId,pagParams);
