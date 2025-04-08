@@ -49,4 +49,9 @@ public class AuthController : ControllerBase {
         return Unauthorized();
     }
     
+    [HttpPost("Logout")]
+    public async Task<IActionResult> Logout(){
+        Response.Cookies.Delete("JwtCookie");
+        return Ok();
+    }
 }
