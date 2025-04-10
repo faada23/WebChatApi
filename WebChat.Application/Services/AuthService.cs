@@ -26,10 +26,10 @@ public class AuthService : IAuthService {
         return null;
     }
 
-    public async Task Register(string reqUsername, string reqHashPassword)
+    public async Task<bool> Register(string reqUsername, string reqHashPassword)
     {   
         var existingUser = await UserRepository.GetByFilter(u => u.Username == reqUsername);
-        if(existingUser != null) return;
+        if(existingUser != null) return false;
 
         User user = new User{
             Username = reqUsername,
@@ -39,5 +39,6 @@ public class AuthService : IAuthService {
         user.PasswordHash = new PasswordHasher<User>().HashPassword(user, user.PasswordHash);
 
         await UserRepository.Insert(user);
+        return true;
     }
 }

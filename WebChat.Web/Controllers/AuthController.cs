@@ -33,7 +33,9 @@ public class AuthController : ControllerBase {
         var username = form["username"].ToString();
         var password = form["password"].ToString();
 
-        await AuthService.Register(username, password);
+        var result = await AuthService.Register(username, password);
+        
+        if(!result) return StatusCode(500,"Error while creating new account");
         return Ok();
     }
 

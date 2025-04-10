@@ -16,7 +16,9 @@ public class ChatController : ControllerBase {
     public async Task<IActionResult> CreatePrivateChat([FromQuery] int joinUserId)
     {   
         int currentUserId = GetCurrentUserId();
-        await ChatService.CreatePrivateChat(currentUserId,joinUserId);
+        var result = await ChatService.CreatePrivateChat(currentUserId,joinUserId);
+
+        if(!result) return StatusCode(500,"Error while creating chat"); 
         return Ok();
     }
 

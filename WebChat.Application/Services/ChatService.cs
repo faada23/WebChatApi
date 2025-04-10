@@ -11,7 +11,7 @@ public class ChatService : IChatService
     }
 
 
-    public async Task CreatePrivateChat(int createUserId, int joinUserId)
+    public async Task<bool> CreatePrivateChat(int createUserId, int joinUserId)
     {   
         var existingChat = await ChatRepository.GetByFilter(
             filter: c => c.ChatType == ChatType.Private &&
@@ -24,9 +24,9 @@ public class ChatService : IChatService
             filter: x => x.Id == createUserId || x.Id == joinUserId
         );
 
-        if(users.Count != 2) throw new InvalidDataException("Users search error");
+        if(users.Count != 2) return false;
 
-        if(existingChat != null) throw new InvalidOperationException("This chat is already exists");
+        if(existingChat != null) return false;
 
         var chat = new Chat {
             Name = $"Chat between {users[0].Username} and {users[1].Username}",
@@ -35,6 +35,7 @@ public class ChatService : IChatService
         };
 
         await ChatRepository.Insert(chat);
+        return true;
     }
 
     public async Task<PagedResponse<GetChatResponse>> GetPrivateChats(int userId,PaginationParameters pagParams){
